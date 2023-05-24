@@ -1,15 +1,15 @@
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
+import datetime
 
 url = "https://www.icicibank.com/about-us/article/news-icici-bank-marginal-cost-of-funds-based-lending-rate-mclr--20163004123526382"
-
 r = requests.get(url)
 
 list_header = []
 data = []
 
-soup=BeautifulSoup(r.text,"html.parser")
+soup = BeautifulSoup(r.text, "html.parser")
 table = soup.find_all('table')[0].find("tr")
 
 for items in table:
@@ -28,5 +28,10 @@ for element in HTML_data:
             continue
     data.append(sub_data)
 
-dataFrame = pd.DataFrame(data = data, columns = list_header)
-dataFrame.to_csv('icici.csv')
+dataFrame = pd.DataFrame(data=data, columns=list_header)
+
+# Add the date to the extracted data
+current_date = datetime.date.today().strftime("%Y-%m-%d")
+dataFrame['Date'] = current_date
+
+dataFrame.to_csv('icici.csv', index=False)
