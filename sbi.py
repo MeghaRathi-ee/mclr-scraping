@@ -1,21 +1,16 @@
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
-
+import datetime
 
 url = "https://sbi.co.in/web/interest-rates/interest-rates/mclr"
-
 r = requests.get(url)
 
 list_header = []
 data = []
 
-soup=BeautifulSoup(r.text,"html.parser")
-# print(soup.encode("utf-8"))
-# print(soup)
+soup = BeautifulSoup(r.text, "html.parser")
 table = soup.find_all('table')[0].find("tr")
-
-# print(table)
 
 for items in table:
     try:
@@ -33,5 +28,10 @@ for element in HTML_data:
             continue
     data.append(sub_data)
 
-dataFrame = pd.DataFrame(data = data, columns = list_header)
-dataFrame.to_csv('sbi.csv')
+dataFrame = pd.DataFrame(data=data, columns=list_header)
+
+# Add the date to the extracted data
+current_date = datetime.date.today().strftime("%Y-%m-%d")
+dataFrame['Date'] = current_date
+
+dataFrame.to_csv('sbi.csv', index=False)
